@@ -1,0 +1,201 @@
+services:
+  redis-1:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-1
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-1.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-2:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-2
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-2.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-3:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-3
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-3.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-4:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-4
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-4.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-5:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-5
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-5.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-6:
+    image: redis:7.0
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 64M
+    container_name: redis-6
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-6.go-o11y-base.orb.local --cluster-announce-port 6379
+    networks:
+      - local-net
+
+  redis-cluster-creator:
+    image: redis:7.0
+    container_name: redis-cluster-creator
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - redis-4
+      - redis-5
+      - redis-6
+    command: >
+      bash -c "sleep 5 &&
+               redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 redis-4:6379 redis-5:6379 redis-6:6379 --cluster-replicas 1 --cluster-yes"
+    networks:
+      - local-net
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    platform: linux/arm64
+    command: --performance_schema=OFF
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+      interval: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+    networks:
+      - local-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    platform: linux/arm64
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # Web UI
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 128M
+    networks:
+      - local-net
+
+  # kafka:
+  #   image: apache/kafka:3.9.2
+  #   container_name: kafka
+  #   platform: linux/arm64
+  #   ports:
+  #     - "19092:19092"
+  #   environment:
+  #     - KAFKA_NODE_ID=0
+  #     - KAFKA_PROCESS_ROLES=controller,broker
+  #     - KAFKA_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+  #     - KAFKA_LISTENERS=EXTERNAL://0.0.0.0:19092,INTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+  #     - KAFKA_ADVERTISED_LISTENERS=EXTERNAL://localhost:19092,INTERNAL://kafka:9094
+  #     - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+  #     - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+  #     - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+  #     - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+  #     - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+  #     - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+  #     - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+  #     - KAFKA_LOG_DIRS=/tmp/kraft-combined-logs
+  #     - KAFKA_HEAP_OPTS=-Xmx320M -Xms320M
+  #     - KAFKA_LOG_CLEANER_ENABLE=false
+  #     - KAFKA_OFFSETS_RETENTION_MINUTES=1
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD",
+  #         "/opt/kafka/bin/kafka-topics.sh",
+  #         "--bootstrap-server",
+  #         "localhost:9094",
+  #         "--list",
+  #       ]
+  #     timeout: 10s
+  #     retries: 10
+  #     interval: 10s
+  #     start_period: 30s
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.2"
+  #         memory: 512M
+  #   networks:
+  #     - local-net
+
+  # kafka-ui:
+  #   image: ghcr.io/kafbat/kafka-ui:latest
+  #   container_name: kafka-ui
+  #   platform: linux/arm64
+  #   depends_on:
+  #     - kafka
+  #   ports:
+  #     - "8101:8080"
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=local
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9094
+  #     - DYNAMIC_CONFIG_ENABLED=true
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.5"
+  #         memory: 512M
+  #   networks:
+  #     - local-net
+
+networks:
+  local-net:
+    driver: bridge
+
+volumes:
+  mysql-data:

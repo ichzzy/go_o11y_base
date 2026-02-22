@@ -1,0 +1,26 @@
+version: "2"
+
+run:
+  timeout: 5m
+  relative-path-mode: gomod
+  concurrency: 4
+
+linters:
+  default: none
+  enable: # https://golangci-lint.run/docs/linters/
+    - gofmt
+    - goimports
+    - govet
+    - staticcheck
+    # - lll
+    - errcheck
+    - misspell
+    - nilerr
+    - nilnil
+  settings:
+    staticcheck:
+      checks: ["all"]
+
+issues:
+  max-issues-per-linter: 20
+  max-same-issues: 5

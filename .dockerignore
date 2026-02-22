@@ -1,0 +1,21 @@
+# IDE
+.idea/
+.vscode/
+__debug_bin*
+
+# Test
+coverage.out
+
+# Logs
+/logs/
+
+# Config
+config.yaml
+
+# Files
+bin/
+.DS_Store
+gcs-credential.json
+*.exe
+*.md
+*.example

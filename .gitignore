@@ -1,0 +1,21 @@
+# IDE
+.idea
+.vscode
+__debug_bin*
+
+# GenCode
+internal/gen/mock
+
+# Logs
+/logs
+
+# Config
+.env
+
+# Files
+bin
+.DS_Store
+*.exe
+*.pem
+*.out
+Implementation_*.md
