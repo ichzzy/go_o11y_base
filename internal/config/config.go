@@ -59,14 +59,20 @@ type ServerConfig struct {
 }
 
 type ObservabilityConfig struct {
-	Pprof PprofConfig `mapstructure:"pprof"`
-	OTEL  OTELConfig  `mapstructure:"otel"`
+	Pprof     PprofConfig     `mapstructure:"pprof"`
+	OTEL      OTELConfig      `mapstructure:"otel"`
+	Pyroscope PyroscopeConfig `mapstructure:"pyroscope"`
 }
 
 type OTELConfig struct {
 	Enabled     bool    `mapstructure:"enabled"`
 	Endpoint    string  `mapstructure:"endpoint"`
 	SampleRatio float64 `mapstructure:"sampleRatio"`
+}
+
+type PyroscopeConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
 }
 
 type PprofConfig struct {

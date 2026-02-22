@@ -155,6 +155,22 @@ func (c *Container) RegisterInfra(conf *config.Config) error {
 		return fmt.Errorf("provide prometheus metrics failed: %w", err)
 	}
 
+	// Pyroscope
+	if err := c.container.Invoke(func(param struct {
+		dig.In
+		Config          *config.Config `name:"config"`
+		ShutdownHandler *shutdown.Handler
+	}) error {
+		pyro := profile.NewPyroscope(param.Config.Observability.Pyroscope, param.Config.App)
+		pyro.Start(context.Background())
+		param.ShutdownHandler.Register(func(ctx context.Context) error {
+			return pyro.Shutdown()
+		})
+		return nil
+	}); err != nil {
+		return fmt.Errorf("invoke start pyroscope failed: %w", err)
+	}
+
 	// TODO: Kafka
 	return nil
 }

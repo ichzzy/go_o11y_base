@@ -32,6 +32,9 @@ observability:
     enabled: false
     endpoint: "localhost:4317" # grpc ep
     sampleRatio: 1.0
+  pyroscope:
+    enabled: false
+    endpoint: "http://localhost:4040"
 
 connections:
   mysql:

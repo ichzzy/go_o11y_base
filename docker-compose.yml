@@ -129,6 +129,20 @@ services:
     networks:
       - local-net
 
+  pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: pyroscope
+    platform: linux/arm64
+    ports:
+      - "4040:4040"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 256M
+    networks:
+      - local-net
+
   # kafka:
   #   image: apache/kafka:3.9.2
   #   container_name: kafka

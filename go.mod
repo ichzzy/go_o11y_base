@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/grafana/pyroscope-go v1.2.7
 	github.com/joho/godotenv v1.5.1
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/prometheus/client_golang v1.23.2
@@ -60,6 +61,7 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.9 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.7 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
