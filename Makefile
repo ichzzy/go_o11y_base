@@ -59,6 +59,7 @@ clean:
 	@rm -f logs/log*
 	@rm -f cmd/server/__debug_bin*
 	@rm -f *.out
+	@rm -f Implementation_*.md
 
 .PHONY: mock
 MOCK_SOURCE_DIR := $(CURDIR)/internal/gen/mock
