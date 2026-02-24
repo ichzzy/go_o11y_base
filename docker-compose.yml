@@ -1,91 +1,50 @@
 services:
   redis-1:
-    image: redis:7.0
+    image: redis:7.0-alpine
     deploy:
       resources:
         limits:
           cpus: "0.1"
           memory: 64M
     container_name: redis-1
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-1.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000
+    ports:
+      - "6379:6379"
 
   redis-2:
-    image: redis:7.0
+    image: redis:7.0-alpine
     deploy:
       resources:
         limits:
           cpus: "0.1"
           memory: 64M
     container_name: redis-2
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-2.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000
+    ports:
+      - "6380:6379"
 
   redis-3:
-    image: redis:7.0
+    image: redis:7.0-alpine
     deploy:
       resources:
         limits:
           cpus: "0.1"
           memory: 64M
     container_name: redis-3
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-3.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
-
-  redis-4:
-    image: redis:7.0
-    deploy:
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 64M
-    container_name: redis-4
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-4.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
-
-  redis-5:
-    image: redis:7.0
-    deploy:
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 64M
-    container_name: redis-5
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-5.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
-
-  redis-6:
-    image: redis:7.0
-    deploy:
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 64M
-    container_name: redis-6
-    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --cluster-announce-ip redis-6.go-o11y-base.orb.local --cluster-announce-port 6379
-    networks:
-      - local-net
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000
+    ports:
+      - "6381:6379"
 
   redis-cluster-creator:
-    image: redis:7.0
+    image: redis:7.0-alpine
     container_name: redis-cluster-creator
     depends_on:
       - redis-1
       - redis-2
       - redis-3
-      - redis-4
-      - redis-5
-      - redis-6
     command: >
-      bash -c "sleep 5 &&
-               redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 redis-4:6379 redis-5:6379 redis-6:6379 --cluster-replicas 1 --cluster-yes"
-    networks:
-      - local-net
+      sh -c "sleep 5 &&
+               redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 --cluster-replicas 0 --cluster-yes"
 
   mysql:
     image: mysql:8.0
@@ -108,8 +67,6 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
-    networks:
-      - local-net
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -126,8 +83,6 @@ services:
         limits:
           cpus: "0.1"
           memory: 128M
-    networks:
-      - local-net
 
   pyroscope:
     image: grafana/pyroscope:latest
@@ -140,8 +95,6 @@ services:
         limits:
           cpus: "0.2"
           memory: 256M
-    networks:
-      - local-net
 
   # kafka:
   #   image: apache/kafka:3.9.2
@@ -184,8 +137,6 @@ services:
   #       limits:
   #         cpus: "0.2"
   #         memory: 512M
-  #   networks:
-  #     - local-net
 
   # kafka-ui:
   #   image: ghcr.io/kafbat/kafka-ui:latest
@@ -204,12 +155,6 @@ services:
   #       limits:
   #         cpus: "0.5"
   #         memory: 512M
-  #   networks:
-  #     - local-net
-
-networks:
-  local-net:
-    driver: bridge
 
 volumes:
   mysql-data:
